@@ -1,0 +1,129 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+@import "board";
+@import "button";
+
+.board {
+    .board(300px, 200px, 10px);
+}
+
+.button {
+    .button(125px, 50px, 10px);
+}
+
+a {
+    text-decoration: none;
+}
+
+input, button {
+    margin: 10px;
+}
+
+p {
+    margin: 1px;
+}
+
+.modal-body {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: nowrap;
+
+    #img-board {
+        height: 215px;
+        padding: 5px;
+        margin-left: 25px;
+    }
+
+    #intro-board {
+        min-width: 180px;
+        height: 215px;
+        margin-left: 25px;
+        overflow-y: scroll;
+        font-size: 8px;
+        cursor: ns-resize;
+        padding: 5px;
+    }
+
+    .board::-webkit-scrollbar {
+        display: none; /* Chrome Safari */
+    }
+
+    #btn-board {
+        display: flex;
+        flex-direction: column;
+        margin-left: 15px;
+
+        #btn-intro {
+            .button(100px, 50px, 10px);
+        }
+        #btn-comment {
+            margin-top: 50px;
+            .button(100px, 50px, 10px);
+        }
+    }
+
+    #intro, #comment {
+        padding: 5px;
+        margin-top: 10px;
+        display: none;
+    }
+}
+
+#url {
+    font-size: 22px;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    width: 50%;
+    height: 100%;
+    padding: 5px 10px;
+    border: 2px solid lightgray;
+    color: black;
+    border-radius:0;
+    transition: border-color .25s ease, box-shadow .25s ease;
+    &:focus {
+        outline:0;
+        border-color: black;
+    }
+}
+
+.alert {
+    justify-content: center;
+    bottom: 5px;
+    right: 5px;
+    position: absolute;
+    z-index: 1;
+    cursor: pointer;
+    display: none;
+}
+
+#btn-board2 {
+    display: flex;
+    #analyse {
+        margin-left: 10px;
+    }
+}
+
+#charts-board {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background-color: rgba(60, 63, 65, 0.8);
+    height: 0;
+    z-index: 100;
+    transition: height .5s;
+    display: none;
+
+    #back {
+        width: 100%;
+        height: 50px;
+        background-color: black;
+        color: white;
+    }
+}

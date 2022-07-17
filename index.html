@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="referrer" content="no-referrer">
+  <title>数据展示</title>
+
+  <link href="./thirdParty/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="./thirdParty/bootstrap/bootstrap-table.min.css">
+
+  <link rel="stylesheet/less" href="./css/index.less" />
+</head>
+<body>
+
+<nav class="navbar navbar-expand-sm bg-light navbar-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="">
+      <img src="./gentle.svg" alt="Logo" style="width:40px;">&nbsp;&nbsp;豆瓣图书数据展示
+    </a>
+  </div>
+</nav>
+<div class="alert alert-success alert-dismissible fade show" id="success-alert">
+</div>
+<div class="alert alert-danger alert-dismissible fade show" id="danger-alert">
+</div>
+<!-- 模态 -->
+<div class="modal fade" id="myModal">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <!-- 模态标题 -->
+      <div class="modal-header">
+        <h4 class="modal-title" id="title">Modal Heading</h4>
+<!--        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>-->
+      </div>
+
+      <!-- 模态主体 -->
+      <div class="modal-body">
+        <div class="board" id="img-board">
+          <div><img src="" id="img" style="width:135px;height:200px"></div>
+        </div>
+        <div class="board" id="intro-board">
+          <div id="basicInfo">SHOW</div>
+        </div>
+        <div id="btn-board">
+          <div class="button" id="btn-intro">
+              <div>
+                  <div>
+                      <div>简介</div>
+                  </div>
+              </div>
+          </div>
+          <div class="button" id="btn-comment">
+              <div>
+                  <div>
+                      <div>评论</div>
+                  </div>
+              </div>
+          </div>
+        </div>
+        <div id="intro"></div>
+        <div id="comment"></div>
+      </div>
+
+      <!-- 模态页脚 -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal" style="border-width: 2px;border-radius: 0;">关闭</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<table id="table"></table>
+
+<input id="url" type="text" autocomplete="off" placeholder="https://book.douban.com/subject/26878124/">
+<div id="btn-board2">
+  <div class="button" id="crawler">
+      <div>
+          <div>
+              <div>爬 !</div>
+          </div>
+      </div>
+  </div>
+  <div class="button" id="analyse">
+      <div>
+          <div>
+              <div>数据分析</div>
+          </div>
+      </div>
+  </div>
+</div>
+
+<div class="modal fade" id="myModal2">
+  <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-content">
+
+      <!-- 模态标题 -->
+      <div class="modal-header">
+        <h4 class="modal-title">图表分析</h4>
+      </div>
+
+      <!-- 模态主体 -->
+      <div class="modal-body">
+        <div id="chart1"></div>
+      </div>
+
+      <!-- 模态页脚 -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal" style="border-width: 2px;border-radius: 0;">关闭</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="./js/index.js"></script>
+
+<script src="./thirdParty/less.min.js"></script>
+<script src="./thirdParty/jquery-3.6.0.min.js"></script>
+<script src="./thirdParty/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="./thirdParty/bootstrap/bootstrap-table.min.js"></script>
+<script src="./thirdParty/bootstrap/bootstrap-table-zh-CN.min.js"></script>
+</body>
+</html>

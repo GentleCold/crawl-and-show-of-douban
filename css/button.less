@@ -1,0 +1,45 @@
+.button(@width, @height, @offset) {
+    width: @width;
+    height: @height;
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+
+    > div { // 背景层
+        width: @width - @offset;
+        height: @height - @offset;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        background-color: black;
+
+        > div { // 前景层
+            width: @width - @offset;
+            height: @height - @offset;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            cursor: pointer;
+            border: @offset / 5 solid black;
+            background-color: white;
+            transition: left .4s, bottom .4s, background-color .4s;
+
+            // 文字居中
+            display: flex;
+            justify-content: center;
+            text-align: center;
+            > div { // 文字层
+                font-weight: bold;
+                margin: auto;
+            }
+        }
+
+        &:hover {
+            > div {
+                background-color: #F3F5F5;
+                left: @offset;
+                bottom: @offset;
+            }
+        }
+    }
+}
