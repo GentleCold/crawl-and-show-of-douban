@@ -290,7 +290,7 @@ const handleOperation = (data) => {
   data = JSON.parse(data).message
   if (data === 'success') {
     postApi('http://127.0.0.1/api/get-data', handleData)
-    alert2.innerHTML = '<strong>成功！</strong>&nbsp;' + data
+    alert1.innerHTML = '<strong>成功！</strong>&nbsp;' + data
     alert1.style.display = 'block'
   } else {
     alert2.innerHTML = '<strong>失败！</strong>&nbsp;' + data
