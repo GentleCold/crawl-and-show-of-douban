@@ -3,7 +3,35 @@ const request = require('request'), iconv = require('iconv-lite'), cheerio = req
 const nodeJieBa = require('nodejieba')
 
 exports.getData = (req, res) => {
-  db.query('select * from books', (err, results) => {
+  let sql = 'select * from books'
+  const choice = req.query.option, value = req.query.value
+  if (choice && value) {
+    switch (choice) {
+      case '0':
+        sql = `select * from books where url like '%${req.query.value}%'`
+        break
+      case '1':
+        sql = `select * from books where basicInfo like '%${req.query.value}%'`
+        break
+      case '2':
+        sql = `select * from books where title like '%${req.query.value}%'`
+        break
+      case '3':
+        sql = `select * from books where point like '%${req.query.value}%'`
+        break
+      case '4':
+        sql = `select * from books where intro like '%${req.query.value}%'`
+        break
+      case '5':
+        sql = `select * from books where comment like '%${req.query.value}%'`
+        break
+      case '6':
+        sql = `select * from books where publishData like '%${req.query.value}%'`
+        break
+    }
+  }
+
+  db.query(sql, (err, results) => {
     if (err) console.log(err.message)
     else res.cc(JSON.stringify(results))
   })

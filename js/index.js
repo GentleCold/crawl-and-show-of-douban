@@ -319,7 +319,30 @@ const postApi = (url, handleData, content='') => {
   xhr.send(content)
 }
 
-postApi('http://127.0.0.1/api/get-data', handleData)
+const getParam = () => {
+  const result = {}, param = {}
+  let str = location.href
+  let num = str.indexOf("?")
+  str = decodeURI(str.substr(num + 1))
+
+  let name, value
+  const arr = str.split("&")
+  for (let i = 0; i < arr.length; i++) {
+  num = arr[i].indexOf("=")
+  if (num > 0) {
+    name = arr[i].substring(0, num)
+    value = arr[i].substr(num + 1)
+    param[name] = value
+    }
+  }
+  result.str = str
+  result.obj = param
+  return result
+}
+
+postApi(`http://127.0.0.1/api/get-data?${getParam().str}`, handleData)
+document.getElementById('choice').value = getParam().obj.option ? getParam().obj.option : 0
+document.getElementById('search-box').value = getParam().obj.value ? getParam().obj.value : ''
 
 const dom1 = document.getElementById('img-board')
 const dom2 = document.getElementById('intro-board')
@@ -364,6 +387,10 @@ document.getElementById('crawler').onclick = () => {
 
 document.getElementById('analyse').onclick = () => {
   $('#myModal2').modal("show")
+}
+
+document.getElementById('search').onclick = () => {
+  window.location.href = `http://127.0.0.1/?option=${document.getElementById('choice').selectedIndex}&value=${document.getElementById('search-box').value}`
 }
 
 alert1.onclick = () => {
