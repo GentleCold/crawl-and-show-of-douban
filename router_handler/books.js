@@ -105,6 +105,10 @@ exports.delData = (req, res) => {
 }
 
 exports.cutData = (req, res) => {
-  // console.log(nodeJieBa.extract(req.body.word, 100))
-  return res.cc('dd')
+  const result = nodeJieBa.extract(req.body.word, 100)
+  result.map(v => {
+    v["name"] = v.word
+    v["value"] = v.weight
+  })
+  return res.cc(JSON.stringify(result))
 }

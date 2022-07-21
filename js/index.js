@@ -27,7 +27,6 @@ const handleData = (data) => {
     pagination: true,
     pageList: [],
     search: true,
-    searchOnEnterKey: true,
     searchAlign: 'left',
     showToggle: true,
     showRefresh: true,
@@ -164,34 +163,105 @@ const handleData = (data) => {
   table.bootstrapTable('refresh')
 
   // data analyse
-  const tmp = {}
+  const tmp = {}, tmp2 = {}
   let word = ''
   data.map(k => {
     word += k.title
 
-    if (!k.publishData) return
-
-    if (!tmp[k.publishData.slice(0, 4)]) {
+    if (k.publishData && !tmp[k.publishData.slice(0, 4)]) {
       tmp[k.publishData.slice(0, 4)] = 1
-    } else {
+    } else if (k.publishData) {
       tmp[k.publishData.slice(0, 4)]++
+    }
+
+    if (k.point && !tmp2[k.point]) {
+      tmp2[k.point] = 1
+    } else if (k.point) {
+      tmp2[k.point]++
     }
   })
 
   const content = 'word=' + encodeURIComponent(word)
-  postApi('http://127.0.0.1/api/cut-data', handleOperation, content)
+  postApi('http://127.0.0.1/api/cut-data', word => {
+    word = JSON.parse(JSON.parse(word).message)
+    const option2 = {
+    backgroundColor: '#fff',
+    tooltip: {
+      show: false
+    },
+    series: [{
+      type: 'wordCloud',
+      gridSize: 1,
+      sizeRange: [12, 55],
+      rotationRange: [-45, 0, 45, 90],
+
+      textStyle: {
+        color: function () {
+          return 'rgb(' +
+            Math.round(Math.random() * 255) +
+            ', ' + Math.round(Math.random() * 255) +
+            ', ' + Math.round(Math.random() * 255) + ')'
+        }
+      },
+      left: 'center',
+      top: 'center',
+      // width: '96%',
+      // height: '100%',
+      right: null,
+      bottom: null,
+      // width: 300,
+      // height: 200,
+      // top: 20,
+      data: word
+    }]
+  }
+    const myChart2 = echarts.init(document.getElementById('chart2'))
+    myChart2.setOption(option2)
+  }, content)
 
   const xData = [], yData = []
-  for (let i = 1960; i < 2023; i++) {
-    xData.push(i.toString())
-    yData.push(tmp[i.toString()]?tmp[i.toString()]:0)
+  for (let i = 69; i <= 100; i++) {
+    const point = (i / 10).toString().length > 1 ? (i / 10).toString() : (i / 10).toString() + '.0'
+    xData.push(point)
+    yData.push(tmp2[point]?tmp2[point]:0)
   }
+
+
 
   const option1 = {
     xAxis: {
       type: 'category',
-      data: xData,
+      data: Object.keys(tmp),
       name: '出版年份'
+    },
+    yAxis: {
+      type: 'value',
+      name: '书籍数量'
+    },
+    series: [
+      {
+        data: Object.values(tmp),
+        type: 'bar',
+      }
+    ],
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {
+        type: 'cross',
+        label: {
+          backgroundColor: '#6a7985'
+        }
+      }
+    }
+  }
+  const myChart1 = echarts.init(document.getElementById('chart1'))
+  myChart1.setOption(option1)
+
+  const option3 = {
+    xAxis: {
+      type: 'category',
+      data: xData,
+      name: '评分'
     },
     yAxis: {
       type: 'value',
@@ -213,10 +283,8 @@ const handleData = (data) => {
       }
     }
   }
-  const myChart1 = echarts.init(document.getElementById('chart1'))
-  myChart1.setOption(option1)
-
-
+  const myChart3 = echarts.init(document.getElementById('chart3'))
+  myChart3.setOption(option3)
 }
 const handleOperation = (data) => {
   data = JSON.parse(data).message
