@@ -1,6 +1,13 @@
 let tmpUrl = ''
 const KEY = ['作者:', '出版社:', '出版年:', '页数:', '定价:', '装帧:', 'ISBN:', '出品方:', '原作名:', '译者:', '丛书:', '副标题:']
+
+/***
+ * 将获取的数据展示为表格并分析
+ * @param data
+ */
 const handleData = (data) => {
+
+  // data show
   data = JSON.parse(JSON.parse(data).message)
   const table = $('table')
   table.bootstrapTable('destroy')
@@ -182,7 +189,11 @@ const handleData = (data) => {
   })
 
   const content = 'word=' + encodeURIComponent(word)
+
+  // 调用 api 将获取标题分词数据
   postApi('http://127.0.0.1/api/cut-data', word => {
+    // 将获取到的信息展示为词云图
+
     word = JSON.parse(JSON.parse(word).message)
     const option2 = {
     backgroundColor: '#fff',
@@ -226,8 +237,7 @@ const handleData = (data) => {
     yData.push(tmp2[point]?tmp2[point]:0)
   }
 
-
-
+  // 以下为按出版日期折线图
   const option1 = {
     xAxis: {
       type: 'category',
@@ -257,6 +267,7 @@ const handleData = (data) => {
   const myChart1 = echarts.init(document.getElementById('chart1'))
   myChart1.setOption(option1)
 
+  // 以下为按评分折线图
   const option3 = {
     xAxis: {
       type: 'category',
@@ -286,17 +297,32 @@ const handleData = (data) => {
   const myChart3 = echarts.init(document.getElementById('chart3'))
   myChart3.setOption(option3)
 }
+
+const alert1 = document.getElementById('success-alert')
+const alert2 = document.getElementById('danger-alert')
+
+/***
+ * 处理返回的操作反馈信息并展示
+ * @param data
+ */
 const handleOperation = (data) => {
   data = JSON.parse(data).message
   if (data === 'success') {
     postApi('http://127.0.0.1/api/get-data', handleData)
-    alert2.innerHTML = '<strong>成功！</strong>&nbsp;' + data
+    alert1.innerHTML = '<strong>成功！</strong>&nbsp;' + data
     alert1.style.display = 'block'
   } else {
     alert2.innerHTML = '<strong>失败！</strong>&nbsp;' + data
     alert2.style.display = 'block'
   }
 }
+
+/***
+ * 封装的ajax-post请求
+ * @param url
+ * @param handleData - 回调函数处理传回的数据
+ * @param content - 传入的参数
+ */
 const postApi = (url, handleData, content='') => {
   const xhr = new XMLHttpRequest()
   xhr.onreadystatechange = function () {
@@ -319,6 +345,10 @@ const postApi = (url, handleData, content='') => {
   xhr.send(content)
 }
 
+/***
+ * 获取当前 url 参数
+ * @returns {{}}
+ */
 const getParam = () => {
   const result = {}, param = {}
   let str = location.href
@@ -340,10 +370,12 @@ const getParam = () => {
   return result
 }
 
+// 调用数据获取 api 并传递参数供分项搜索
 postApi(`http://127.0.0.1/api/get-data?${getParam().str}`, handleData)
 document.getElementById('choice').value = getParam().obj.option ? getParam().obj.option : 0
 document.getElementById('search-box').value = getParam().obj.value ? getParam().obj.value : ''
 
+// 以下为 dom 操作，用于图书详细展示
 const dom1 = document.getElementById('img-board')
 const dom2 = document.getElementById('intro-board')
 const dom3 = document.getElementById('btn-board')
@@ -375,12 +407,9 @@ document.getElementById('btn-del').onclick = () => {
   postApi('http://127.0.0.1/api/del-data', handleOperation, content)
 }
 
-
-const alert1 = document.getElementById('success-alert')
-const alert2 = document.getElementById('danger-alert')
-
 document.getElementById('crawler').onclick = () => {
   alert1.style.display = alert2.style.display = 'none'
+  // 调用数据爬取api爬取特定页
   const content = 'url=' + encodeURIComponent(document.getElementById('url').value)
   postApi('http://127.0.0.1/api/crawl-data', handleOperation, content)
 }
@@ -390,6 +419,7 @@ document.getElementById('analyse').onclick = () => {
 }
 
 document.getElementById('search').onclick = () => {
+  // 根据分项搜索输入信息添加 url 参数
   window.location.href = `http://127.0.0.1/?option=${document.getElementById('choice').selectedIndex}&value=${document.getElementById('search-box').value}`
 }
 

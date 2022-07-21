@@ -1,7 +1,15 @@
 const request = require('request'), iconv = require('iconv-lite'), cheerio = require('cheerio')
+
+// promise 实现程序休眠
 function sleep (time) {
   return new Promise((resolve) => setTimeout(resolve, time));
 }
+
+/***
+ * 封装请求函数
+ * @param url
+ * @param callback
+ */
 const getHtml = (url, callback) => {
   const options = {
     url: url,
@@ -14,8 +22,9 @@ const getHtml = (url, callback) => {
   request(options, callback)
 }
 
+// 汇总关键词，进行基本信息拆解
 const KEY = ['作者:', '出版社:', '出版年:', '页数:', '定价:', '装帧:', 'ISBN:', '出品方:', '原作名:', '译者:', '丛书:', '副标题:']
-
+// 基本信息拆解函数
 const handleBasicInfo = (str) => {
   const basicInfo = {}
   const s = str.replace(/\s/g, '')
@@ -41,6 +50,7 @@ let fail = 0, success = 0
 
 const duplicate = []
 
+// 调用请求种子页面
 getHtml(`https://book.douban.com/tag/%E5%90%8D%E8%91%97?start=340&type=T`, (err, res, body) => {
   if (err) {
     console.log('get url error')
@@ -49,7 +59,9 @@ getHtml(`https://book.douban.com/tag/%E5%90%8D%E8%91%97?start=340&type=T`, (err,
   const html = iconv.decode(body, 'utf8'), $ = cheerio.load(html)
   const root = $('a[href]')
   for (let i = 0; i < root.length; i++) {
+    // 睡眠处理，减轻对目标网站服务器压力
     sleep(i * 1000).then(() => {
+      // 正则匹配符合格式的链接
       if(root[i].attribs && /https:\/\/book.douban.com\/subject\/\d+\//.exec(root[i].attribs.href)) {
         const data = {}, url = /https:\/\/book.douban.com\/subject\/\d+\//.exec(root[i].attribs.href)[0]
         if (url in duplicate) {
@@ -76,6 +88,8 @@ getHtml(`https://book.douban.com/tag/%E5%90%8D%E8%91%97?start=340&type=T`, (err,
             const html = iconv.decode(body, 'utf8')
             const $ = cheerio.load(html)
             const rawBasicInfo = $(`[id='info']`).text()
+
+            // 数据解析，存入data对象
             data.title = $(`span[property="v:itemreviewed"]`).text()
             data.basicInfo = handleBasicInfo(rawBasicInfo)
             data.point = $(`strong[class]`).text().trim()
