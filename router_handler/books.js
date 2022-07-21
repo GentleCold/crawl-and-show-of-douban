@@ -1,5 +1,6 @@
 const db = require('../db')
 const request = require('request'), iconv = require('iconv-lite'), cheerio = require('cheerio')
+const nodeJieBa = require('nodejieba')
 
 exports.getData = (req, res) => {
   db.query('select * from books', (err, results) => {
@@ -89,4 +90,21 @@ exports.crawlData = (req, res) => {
       })
     })
   })
+}
+
+exports.delData = (req, res) => {
+  db.query('delete from books where url=?', req.body.url, (err, results) => {
+    if (err) return res.cc(err)
+
+    if (results.affectedRows > 0) {
+      return res.cc('success')
+    } else {
+      return res.cc('fail')
+    }
+  })
+}
+
+exports.cutData = (req, res) => {
+  // console.log(nodeJieBa.extract(req.body.word, 100))
+  return res.cc('dd')
 }

@@ -1,10 +1,12 @@
+let tmpUrl = ''
 const KEY = ['作者:', '出版社:', '出版年:', '页数:', '定价:', '装帧:', 'ISBN:', '出品方:', '原作名:', '译者:', '丛书:', '副标题:']
 const handleData = (data) => {
   data = JSON.parse(JSON.parse(data).message)
   const table = $('table')
   table.bootstrapTable('destroy')
   table.bootstrapTable({
-    onClickRow: row => {
+    onClickRow: (row, dom, field) => {
+      if (field === 'operate') return
       toInfo()
       document.getElementById('title').textContent = row.title
       document.getElementById('img').setAttribute('src', row.img)
@@ -21,7 +23,7 @@ const handleData = (data) => {
       $('#myModal').modal("show")
     },
     data: data,
-    pageSize: '10',
+    pageSize: '5',
     pagination: true,
     pageList: [],
     search: true,
@@ -142,9 +144,90 @@ const handleData = (data) => {
           }
         }
       },
+      {
+        field: 'operate',
+        title: '操作',
+        events: {
+          'click #delete': function (e, value, row) {
+            $('#myModal3').modal('show')
+            tmpUrl = row.url
+          }
+        },
+        formatter: function () {
+          let result = "";
+          result += '<button id="delete" class="btn btn-danger btn-sm">删除</button>';
+          return result;
+        }
+      }
     ]
   })
   table.bootstrapTable('refresh')
+
+  // data analyse
+  const tmp = {}
+  let word = ''
+  data.map(k => {
+    word += k.title
+
+    if (!k.publishData) return
+
+    if (!tmp[k.publishData.slice(0, 4)]) {
+      tmp[k.publishData.slice(0, 4)] = 1
+    } else {
+      tmp[k.publishData.slice(0, 4)]++
+    }
+  })
+
+  const content = 'word=' + encodeURIComponent(word)
+  postApi('http://127.0.0.1/api/cut-data', handleOperation, content)
+
+  const xData = [], yData = []
+  for (let i = 1960; i < 2023; i++) {
+    xData.push(i.toString())
+    yData.push(tmp[i.toString()]?tmp[i.toString()]:0)
+  }
+
+  const option1 = {
+    xAxis: {
+      type: 'category',
+      data: xData,
+      name: '出版年份'
+    },
+    yAxis: {
+      type: 'value',
+      name: '书籍数量'
+    },
+    series: [
+      {
+        data: yData,
+        type: 'bar',
+      }
+    ],
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {
+        type: 'cross',
+        label: {
+          backgroundColor: '#6a7985'
+        }
+      }
+    }
+  }
+  const myChart1 = echarts.init(document.getElementById('chart1'))
+  myChart1.setOption(option1)
+
+
+}
+const handleOperation = (data) => {
+  data = JSON.parse(data).message
+  if (data === 'success') {
+    postApi('http://127.0.0.1/api/get-data', handleData)
+    alert2.innerHTML = '<strong>成功！</strong>&nbsp;' + data
+    alert1.style.display = 'block'
+  } else {
+    alert2.innerHTML = '<strong>失败！</strong>&nbsp;' + data
+    alert2.style.display = 'block'
+  }
 }
 const postApi = (url, handleData, content='') => {
   const xhr = new XMLHttpRequest()
@@ -196,6 +279,11 @@ document.getElementById('btn-intro').onclick = () => {
 document.getElementById('btn-comment').onclick = () => {
   toComment()
 }
+document.getElementById('btn-del').onclick = () => {
+  const content = 'url=' + encodeURIComponent(tmpUrl)
+  postApi('http://127.0.0.1/api/del-data', handleOperation, content)
+}
+
 
 const alert1 = document.getElementById('success-alert')
 const alert2 = document.getElementById('danger-alert')
@@ -203,18 +291,7 @@ const alert2 = document.getElementById('danger-alert')
 document.getElementById('crawler').onclick = () => {
   alert1.style.display = alert2.style.display = 'none'
   const content = 'url=' + encodeURIComponent(document.getElementById('url').value)
-  postApi('http://127.0.0.1/api/crawl-data', data => {
-    data = JSON.parse(data).message
-    if (data === 'success') {
-      postApi('http://127.0.0.1/api/get-data', handleData)
-      alert2.innerHTML = '<strong>成功！</strong>&nbsp;' + data
-      alert1.style.display = 'block'
-    }
-    else {
-      alert2.innerHTML = '<strong>失败！</strong>&nbsp;' + data
-      alert2.style.display = 'block'
-    }
-  }, content)
+  postApi('http://127.0.0.1/api/crawl-data', handleOperation, content)
 }
 
 document.getElementById('analyse').onclick = () => {

@@ -104,7 +104,8 @@
 
       <!-- 模态主体 -->
       <div class="modal-body">
-        <div id="chart1"></div>
+        <div id="chart1" style="width: 800px;height:400px;"></div>
+        <div id="chart2" style="width: 800px;height:400px;"></div>
       </div>
 
       <!-- 模态页脚 -->
@@ -115,6 +116,30 @@
   </div>
 </div>
 
+<div class="modal fade" id="myModal3">
+  <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-content">
+
+      <!-- 模态标题 -->
+      <div class="modal-header">
+        <h4 class="modal-title">警告</h4>
+      </div>
+
+      <!-- 模态主体 -->
+      <div class="modal-body">
+        确定删除？
+      </div>
+
+      <!-- 模态页脚 -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal" style="border-width: 2px;border-radius: 0;">取消</button>
+        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal" style="border-width: 2px;border-radius: 0;" id="btn-del">删除</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="./thirdParty/echarts.min.js"></script>
 <script src="./js/index.js"></script>
 
 <script src="./thirdParty/less.min.js"></script>
