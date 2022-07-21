@@ -1,6 +1,13 @@
 let tmpUrl = ''
 const KEY = ['作者:', '出版社:', '出版年:', '页数:', '定价:', '装帧:', 'ISBN:', '出品方:', '原作名:', '译者:', '丛书:', '副标题:']
+
+/***
+ * 将获取到的数据展示为表格并分析
+ * @param data
+ */
 const handleData = (data) => {
+
+  // data show
   data = JSON.parse(JSON.parse(data).message)
   const table = $('table')
   table.bootstrapTable('destroy')
@@ -182,7 +189,9 @@ const handleData = (data) => {
   })
 
   const content = 'word=' + encodeURIComponent(word)
+  // 调用数据分词接口，将title分词
   postApi('http://127.0.0.1/api/cut-data', word => {
+    // 获取到的分词数据作词云展示
     word = JSON.parse(JSON.parse(word).message)
     const option2 = {
     backgroundColor: '#fff',
@@ -226,8 +235,7 @@ const handleData = (data) => {
     yData.push(tmp2[point]?tmp2[point]:0)
   }
 
-
-
+  // 按出版日期折线图
   const option1 = {
     xAxis: {
       type: 'category',
@@ -257,6 +265,7 @@ const handleData = (data) => {
   const myChart1 = echarts.init(document.getElementById('chart1'))
   myChart1.setOption(option1)
 
+  // 按评分折线图
   const option3 = {
     xAxis: {
       type: 'category',
@@ -286,6 +295,13 @@ const handleData = (data) => {
   const myChart3 = echarts.init(document.getElementById('chart3'))
   myChart3.setOption(option3)
 }
+
+const alert1 = document.getElementById('success-alert')
+const alert2 = document.getElementById('danger-alert')
+/***
+ * 处理操作反馈信息并利用 alert 展示
+ * @param data
+ */
 const handleOperation = (data) => {
   data = JSON.parse(data).message
   if (data === 'success') {
@@ -297,6 +313,13 @@ const handleOperation = (data) => {
     alert2.style.display = 'block'
   }
 }
+
+/***
+ * 封装的 ajax-post 请求
+ * @param url
+ * @param handleData - 回调函数，处理请求后的返回数据
+ * @param content - 传递请求参数
+ */
 const postApi = (url, handleData, content='') => {
   const xhr = new XMLHttpRequest()
   xhr.onreadystatechange = function () {
@@ -319,6 +342,10 @@ const postApi = (url, handleData, content='') => {
   xhr.send(content)
 }
 
+/***
+ * 获取 url 参数
+ * @returns {{}}
+ */
 const getParam = () => {
   const result = {}, param = {}
   let str = location.href
@@ -340,10 +367,12 @@ const getParam = () => {
   return result
 }
 
+// 调用获取数据接口并传递参数进行分项like搜索
 postApi(`http://127.0.0.1/api/get-data?${getParam().str}`, handleData)
 document.getElementById('choice').value = getParam().obj.option ? getParam().obj.option : 0
 document.getElementById('search-box').value = getParam().obj.value ? getParam().obj.value : ''
 
+// 以下为 dom 操作
 const dom1 = document.getElementById('img-board')
 const dom2 = document.getElementById('intro-board')
 const dom3 = document.getElementById('btn-board')
@@ -375,10 +404,7 @@ document.getElementById('btn-del').onclick = () => {
   postApi('http://127.0.0.1/api/del-data', handleOperation, content)
 }
 
-
-const alert1 = document.getElementById('success-alert')
-const alert2 = document.getElementById('danger-alert')
-
+// 调用爬虫接口实现在线爬取特定页并动态更新
 document.getElementById('crawler').onclick = () => {
   alert1.style.display = alert2.style.display = 'none'
   const content = 'url=' + encodeURIComponent(document.getElementById('url').value)
@@ -389,6 +415,7 @@ document.getElementById('analyse').onclick = () => {
   $('#myModal2').modal("show")
 }
 
+// 定位url，添加输入的参数来进行分项搜索
 document.getElementById('search').onclick = () => {
   window.location.href = `http://127.0.0.1/?option=${document.getElementById('choice').selectedIndex}&value=${document.getElementById('search-box').value}`
 }
